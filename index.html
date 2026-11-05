@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>MapleCraft - Isla and the Silly Dragon (Fire Tablet)</title>
+<title>MapleCraft v3 — Isla and the Silly Dragon</title>
 <style>
 *{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#eaf5ff;color:#223044;margin:0;padding:12px;text-align:center}
 main{max-width:620px;margin:auto}h1{font-size:1.55rem;margin:8px 0}#message{background:white;border-radius:12px;padding:10px;min-height:55px;font-weight:650}
@@ -13,9 +13,9 @@ button:active{background:#d6d0ff}button:focus-visible{outline:3px solid #f90}
 small{display:block;margin:12px 0;color:#43516b}#win{display:none;position:fixed;inset:0;background:#29134cdd;z-index:10;align-items:center;justify-content:center;padding:15px}
 #win.show{display:flex}.winbox{background:#fff5cf;border:5px solid #ffbf38;border-radius:25px;padding:20px;max-width:450px;width:100%;font-size:1.2rem}
 #win h2{font-size:2rem}.confetti{font-size:2.4rem;animation:wiggle .6s infinite alternate}@keyframes wiggle{to{transform:rotate(10deg) scale(1.15)}}
-</style></head><body><main><h1>👑 MapleCraft 🐉</h1>
+</style></head><body><main><h1>👑 MapleCraft v3 🐉</h1>
 <p id="message" aria-live="polite">Hi, Isla! Collect three diamonds, then enter the End portal!</p>
-<div class="stats"><span>🪵 <b id="wood">0</b></span><span>🪨 <b id="stone">0</b></span><span>💎 <b id="gems">0</b>/3</span><span>🐉 <b id="hits">0</b>/3</span></div>
+<div class="stats"><span>Wood: <b id="wood">0</b></span><span>Stone: <b id="stone">0</b></span><span>💎 <b id="gems">0</b>/3</span><span>🐉 <b id="hits">0</b>/3</span></div>
 <svg id="board" viewBox="0 0 400 320" role="img" aria-label="MapleCraft adventure game"></svg>
 <p style="background:#fff;border-radius:10px;padding:10px;margin:8px 0;font-size:.95rem"><strong>Keyboard:</strong> Arrow keys = move · Space = mine / throw pancake · E = mine · B = build house · P = enter/leave End · F = throw pancake<br><strong>Tablet:</strong> Use the buttons below.</p><div class="controls">
 <span></span><button data-move="0,-1">⬆️</button><span></span>
@@ -41,7 +41,7 @@ function render(){var out='',end=state.zone==='end';
 for(var y=0;y<H;y++)for(var x=0;x<W;x++){out+='<rect x="'+x*S+'" y="'+y*S+'" width="40" height="40" fill="'+(end?((x+y)%2?'#66508e':'#76619d'):((x+y)%2?'#8bd27b':'#9fdf90'))+'" stroke="'+(end?'#57436f':'#74b46e')+'" stroke-width=".6"/>'}
 if(end){out+='<text x="205" y="125" font-size="100" text-anchor="middle">'+(state.hits===3?'🐔':'🐉')+'</text><text x="205" y="163" font-size="19" text-anchor="middle" fill="white">🎀 '+(state.hits===3?'CLUCK!':'Silly Dragon')+'</text>';
 out+='<text x="200" y="193" font-size="18" text-anchor="middle" fill="white">🥞 Pancake hits: '+state.hits+'/3</text>'}
-else{var icons={tree:'🌳',rock:'🪨',gem:'💎',house:'🏠'};state.objects.forEach(function(a){out+='<text x="'+(a[1]*S+20)+'" y="'+(a[2]*S+30)+'" font-size="29" text-anchor="middle">'+icons[a[0]]+'</text>'});
+else{var icons={tree:'🌳',gem:'💎',house:'🏠'};state.objects.forEach(function(a){if(a[0]==='rock'){var cx=a[1]*S+20,cy=a[2]*S+21;out+='<path d="M '+(cx-14)+' '+(cy+9)+' L '+(cx-17)+' '+(cy-2)+' L '+(cx-7)+' '+(cy-13)+' L '+(cx+7)+' '+(cy-12)+' L '+(cx+16)+' '+(cy-1)+' L '+(cx+12)+' '+(cy+10)+' Z" fill="#87939e" stroke="#4d5965" stroke-width="1.5"/><path d="M '+(cx-7)+' '+(cy-13)+' L '+(cx-2)+' '+(cy-1)+' L '+(cx+16)+' '+(cy-1)+'" fill="none" stroke="#c5cdd3" stroke-width="2"/>'}else{out+='<text x="'+(a[1]*S+20)+'" y="'+(a[2]*S+30)+'" font-size="29" text-anchor="middle">'+icons[a[0]]+'</text>'}});
 out+='<text x="370" y="28" font-size="26" text-anchor="middle">'+(state.gems===3?'🌀':'🔒')+'</text>'}
 out+='<rect x="'+(state.x*S+3)+'" y="'+(state.y*S+3)+'" width="34" height="34" rx="7" fill="#ffffff88" stroke="#c348a8" stroke-width="2"/><text x="'+(state.x*S+20)+'" y="'+(state.y*S+30)+'" font-size="29" text-anchor="middle">👸</text>';
 board.innerHTML=out;
@@ -49,7 +49,7 @@ board.innerHTML=out;
 function move(dx,dy){var x=Math.max(0,Math.min(W-1,state.x+dx)),y=Math.max(0,Math.min(H-1,state.y+dy));
 if(state.zone==='world'&&state.objects.some(function(a){return a[1]===x&&a[2]===y})){say('A block is there! Stand beside it and tap Mine.');return}
 state.x=x;state.y=y;render()}
-function nearby(){for(var i=0;i<state.objects.length;i++){var a=state.objects[i];if(Math.abs(a[1]-state.x)+Math.abs(a[2]-state.y)===1&&a[0]!=='house')return i;}return -1;}
+function nearby(){return state.objects.findIndex(function(a){return Math.abs(a[1]-state.x)+Math.abs(a[2]-state.y)===1&&a[0]!=='house'})}
 function mine(){if(state.zone==='end'){say('The dragon giggles! Use Throw Pancake!');beep(440,.12);return}
 var i=nearby();if(i<0){say('Walk next to a tree, rock, or diamond first!');return}
 var o=state.objects.splice(i,1)[0];if(o[0]==='tree'){state.wood++;say('CHOP! One wood for Princess Isla!');beep(280,.12,'square')}
@@ -58,7 +58,7 @@ if(o[0]==='gem'){state.gems++;say(state.gems===3?'All three diamonds! Tap Enter 
 render()}
 function build(){if(state.zone==='end'){say('No building here! The dragon might eat your roof!');return}
 if(state.wood<3||state.stone<2){say('A house needs 3 wood and 2 stone. Keep mining!');return}
-var spots=[[1,0],[0,1],[-1,0],[0,-1]],p=null;for(var j=0;j<spots.length;j++){var a=[state.x+spots[j][0],state.y+spots[j][1]];if(a[0]>=0&&a[0]<W&&a[1]>=0&&a[1]<H&&!state.objects.some(function(o){return o[1]===a[0]&&o[2]===a[1]})){p=a;break;}}
+var spots=[[1,0],[0,1],[-1,0],[0,-1]],p=spots.map(function(a){return [state.x+a[0],state.y+a[1]]}).find(function(a){return a[0]>=0&&a[0]<W&&a[1]>=0&&a[1]<H&&!state.objects.some(function(o){return o[1]===a[0]&&o[2]===a[1]})});
 if(!p){say('Move somewhere with space next to you!');return}
 state.wood-=3;state.stone-=2;state.house++;state.objects.push(['house',p[0],p[1]]);say('HOUSE BUILT! Maple wants a pancake kitchen!');song();render()}
 function portal(){if(state.zone==='end'){state.zone='world';state.x=1;state.y=1;say('Back home! Your buildings are still here.');render();return}
@@ -70,7 +70,7 @@ state.hits++;beep(250+state.hits*180,.24,'triangle');
 say(state.hits===3?'SQUAWK! The dragon turned into a giant chicken!':'SPLAT! The dragon sneezed syrup! Only '+(3-state.hits)+' more pancake hits!');
 render();if(state.hits===3){song();setTimeout(function(){document.getElementById('win').classList.add('show')},450)}}
 function restart(){state=fresh();document.getElementById('win').classList.remove('show');say('New adventure! Collect three diamonds and meet the silly dragon!');render()}
-var movementButtons=document.querySelectorAll('[data-move]');for(var i=0;i<movementButtons.length;i++){(function(b){b.addEventListener('click',function(){var d=b.getAttribute('data-move').split(',');move(Number(d[0]),Number(d[1]));});})(movementButtons[i]);}
+document.querySelectorAll('[data-move]').forEach(function(b){b.addEventListener('click',function(){var d=b.getAttribute('data-move').split(',').map(Number);move(d[0],d[1])})});
 document.getElementById('mine').addEventListener('click',mine);document.getElementById('build').addEventListener('click',build);
 document.getElementById('portal').addEventListener('click',portal);document.getElementById('attack').addEventListener('click',attack);
 document.getElementById('reset').addEventListener('click',function(){if(confirm('Start a new world? This clears your saved progress.'))restart()});
